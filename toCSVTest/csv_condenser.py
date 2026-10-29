@@ -1,29 +1,40 @@
-import glob
-import os
 import pandas as pd
+from pathlib import Path
 
-directory_in_str = "..\\output\\fit\\"
-directory_out_str = "..\\output\\csv\\"
+# Create relative paths to input and output directories
+parent_dir = Path("output")
+input_dir = parent_dir  / "fit"
+output_dir = parent_dir / "csv"
 
-if not os.path.exists(directory_out_str):
-    os.makedirs(directory_out_str)
+# Create output directory
+output_dir.mkdir(parents=True, exist_ok=True)
 
-csv_files = glob.glob(directory_in_str+'\\*_data.{}'.format('csv'))
+# Collect csv data files
+csv_files = list(input_dir.glob("*_data.csv"))
+
+# Initialise empty list and dataframe for downstream collection and concatenation
+df_list = []
 out = pd.DataFrame()
-output_file = directory_out_str + 'output.csv'
-first_iteration = True
-count = 0
-for file in csv_files:
-    count += 1
-    df = pd.read_csv(file, low_memory=False)
-    file_name = file.split('\\')[-1]
 
-    if first_iteration:
-        out = df
-        first_iteration = False
-    else:
-        out = pd.concat([out, df], axis=0, join='outer')
-out=out[['record.timestamp[s]', 'record.distance[m]', 'record.heart_rate[bpm]', 'record.power[watts]', 'record.enhanced_speed[m/s]', 'GUID']]
+# Declare path on concatenated CSV files
+output_file = output_dir / 'output.csv'
+
+print("Collecting individual CSV files...")
+# Collect csv files in a list
+for file in csv_files:
+    df = pd.read_csv(file, low_memory=False)
+    df_list.append(df)
+
+print("Concatenating collected data...")
+# Concatenate list of dataframes into one dataframe
+out = pd.concat(df_list)
+
+# Drop irrelevant columns
+out = out[['record.timestamp[s]', 'record.distance[m]', 'record.heart_rate[bpm]', 'record.power[watts]', 'record.enhanced_speed[m/s]', 'GUID']]
+
+# Rename columns for readability
 out.rename(columns={'record.timestamp[s]': 'timestamp[s]', 'record.distance[m]': 'distance[m]', 'record.heart_rate[bpm]': 'heart_rate[bpm]', 'record.power[watts]': 'power[watts]', 'record.enhanced_speed[m/s]': 'speed[m/s]'}, errors="raise", inplace=True)
+
+# Save dataframe as CSV
 out.to_csv(output_file, index=False)
-print("Complete")
+print("Successfully concatenated and pre-processed data")
