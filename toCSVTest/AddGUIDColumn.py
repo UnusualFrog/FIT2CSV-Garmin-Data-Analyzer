@@ -1,8 +1,10 @@
 import os
 import csv
+from pathlib import Path
 
-# Define the folder path where your CSV files are located
-folder_path = r'C:\Users\noah.forward\Desktop\Repos\CycleTrainingProject\output\fit'  # Replace with your actual folder path
+# Location of CSV files
+parent_path = Path("output")
+folder_path = parent_path / "fit"
 
 # Loop through each file in the folder
 for filename in os.listdir(folder_path):
