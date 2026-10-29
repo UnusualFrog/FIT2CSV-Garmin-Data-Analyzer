@@ -1,20 +1,30 @@
-import os
 import subprocess
+from pathlib import Path
 
 # Specify directory containing files to be converted
-directory_in_str = "..\\output\\fit\\"
-directory_in = os.fsencode(directory_in_str)
+parent_directory = Path("output")
+directory_in = parent_directory / 'fit'
 
-# run the batch file on each file in the input directory that ends with .fit
-for file in os.listdir(directory_in):
-        filename = os.fsdecode(file)
-        if filename.endswith(".fit"):
-            p = subprocess.Popen(['FitSDKRelease_21.158.00\\java\\FitToCSV-record.bat', "..\\output\\fit\\" + filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+# Path to JAR file for converting from .fit to .csv
+jar_path = Path("toCSVTest") / "FitSDKRelease_21.158.00" / "java" / "FitCSVTool.jar"
 
-            p.stdin.write('\n')
-            p.stdin.flush()
-            p.wait()
-print("Complete")
+# Loop through each .fit file and run the JAR file to convert it to CSV.
+for file in directory_in.glob("*.fit"):
+    output_prefix = file.with_suffix("")
+    subprocess.run(
+        [   
+            "java",
+            "-jar", str(jar_path),
+            "-b", str(file),
+            str(output_prefix),
+            "--defn",
+            "none",
+            "--data",
+            "record",
+              ],
+        check=True
+    )
+print("Successfully converted all .fit files to .csv")
 
 
 
