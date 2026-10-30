@@ -53,6 +53,8 @@ def generate_monthly_distance(dataframe, path):
         figsize=(12, 6),
         title="Monthly Average Distance",
         color=colors[: len(monthly_distance)],
+        xlabel="Months",
+        ylabel="Avg. Distance (m)"
     )
 
     plt.xticks(
@@ -61,8 +63,6 @@ def generate_monthly_distance(dataframe, path):
         rotation=45,
     )
 
-    plt.ylabel = "Avg. Distance"
-    plt.xlabel = "Months"
     plt.title = "Avg. Distance by Month"
 
     plt.savefig(path / "avg_distance_month.png")
