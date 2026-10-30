@@ -24,17 +24,17 @@ colors = [
 
 def get_hr_zone(hr):
     if hr < 119 or pd.isna(hr):
-        return "Zone 0"
+        return "Zone 0 (0-118)"
     elif hr < 132:
-        return "Zone 1"
+        return "Zone 1 (119-131)"
     elif hr < 144:
-        return "Zone 2"
+        return "Zone 2 (132-143)"
     elif hr < 155:
-        return "Zone 3"
+        return "Zone 3 (133-154)"
     elif hr < 167:
-        return "Zone 4"
+        return "Zone 4 (155-166)"
     else:
-        return "Zone 5"
+        return "Zone 5 (167+)"
 
 
 def generate_monthly_distance(dataframe, path):
@@ -125,7 +125,7 @@ def generate_hr_zone_pie(dataframe, path):
         y='hr_percent',
         labels=df.index,
         autopct='%1.1f%%',
-        figsize=(5,5),
+        figsize=(7,7),
         ylabel="",
         legend=False,
     )
